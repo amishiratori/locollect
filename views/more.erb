@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/stylesheets/more.css">
+    <title>Locollect</title>
+</head>
+
+<body>
+    
+     <div class="header">
+        <div class="header-left">Locollect</div>
+        <div class="header-right">
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li><a href="/new">Create</a></li>
+            </ul>
+        </div>
+    </div>
+    
+     <div class="space">
+        
+    </div>
+    
+    <div class="content">
+    <% if @map.present? %>
+    <li>
+            <h2><%= @map.map_name %></h2>
+            <p><%= @map.name %></p>
+            <% stores_string = "" %>
+            <% @map.stores.each do |store| %>
+                <% stores_string = stores_string + "|" + store.address %>
+                <% end %>
+            <img src="https://maps.googleapis.com/maps/api/staticmap?center=<%= @stations[@map.station_id.to_i-1].address %>&zoom=11&size=5000x1000&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R&key=AIzaSyAXP0hQCi9NGL2MIbxgGQJfVrdqP8VOvMM&sensor=false&style=visibility:simplified&markers=color:green|size:small<%= stores_string %>">
+            <p></p><span><%= @map.good %></span>
+        <span>
+            <form action="/good/<%= @map.id %>" method="post">
+                <input type="image" alt="いいね！" width="35" height="35" src="/images/good.png">
+            </form>
+        </span></p>
+    </li>
+    
+
+    <table class="stores">
+    <% if @map.stores.length > 0 %>
+                <tr><th>name</th><th>address</th><th></th></tr>
+            <% @map.stores.each do |store| %>
+                <tr><td><%= store.name %></td><td><%= store.address %></td></tr>
+            <% end %>
+        <% end %>
+    </table>
+    
+    <% end %>
+    </div>
+    
+    <div class="footer">
+    <h2>Locollect</h2>
+    <div class="gnavi">
+  <a href="http://www.gnavi.co.jp/"> 
+<img src="http://apicache.gnavi.co.jp/image/rest/b/api_155_20.gif" width="155" height="20" border="0" alt="グルメ情報検索サイト　ぐるなび">
+</a>
+</div>
+</div>
+
+    
+</body>
+
+</head>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <h1>管理者ページ</h1>
+    <a href="/admin/delete/all/store">店全部消す</a>
+    <a href="/admin/delete/all/map">map全部消す</a>
+    
+    <div class="box">
+    <h2 class="box-header">ぐるなびAPI</h2>
+    
+    <form action="/admin/json" method="post">
+        <p>キーワード入力：<input type="text" name="search_word"></p>
+        <!--<p>都道府県：<input type="text" name="search_pref"></p>-->
+        <input type="submit" value="json取得">
+    </form>
+    
+    <% if @response_stores %>
+    <h2 class="box-header">ぐるなびレスポンス</h2>
+    <table class="admin-table" border=1>
+        <tr><th>name</th><th>address</th><th>station</th></tr>
+        <% @response_stores.each do |response_store| %>
+        <tr>
+            <td><%= response_store["name"] %></td>
+            <td><%= response_store["address"].split(" ")[1] %></td>
+            <td><%= response_store["access"]["station"] %></td>
+        </tr>
+        <% end %>
+    </table>
+    <% end %>
+    </div>
+    
+    <div class="box">
+    <h2 class="box-header">map追加</h2>
+    <form action="/admin/new/map" method="post">
+        
+    <table class="admin-table">
+        <tr><td></td><td></td><td><input type="submit" value="決定"></td></tr>
+        <tr><th>name</th><th>map</th><th>station</th></tr>
+        <tr>
+            <td><input type="text" name="name"></td>
+            <td><input type="text" name="map_name"></td>
+            <td>
+            <select name="station" id="station">
+                <% @stations.each do |station| %> 
+                    <option value="<%= station.id %>"><%= station.name %></option>
+                <% end %>
+            </select>
+            </td>
+        </tr>
+        <tr><th>この店をマップに追加</th><th>name</th><th>address</th></tr>
+        <% if @stores %>
+            <% @stores.each do |store| %>
+                <tr>
+                    <!--すでに追加している店しかマップに登録できない-->
+                    <td><input type="checkbox" value=<%= store.id %> name="stores[]"></td>
+                    <td><%= store.name %></td>
+                    <td><%= store.address %></td>
+                </tr>
+            <% end %>
+        <% else %>
+            <p>表示する店がありません</p>
+        <% end %>
+        <tr><td></td><td></td><td><input type="submit" value="決定"></td></tr>
+    </table>
+    </form>
+    </div>
+    
+    <div class="box">
+    <h2 class="box-header">store追加</h2>
+    <table class="admin-table">
+    <form action="/admin/new/store" method="post">
+        <tr><th>name</th><th>address</th><th>追加</th></tr>
+        <tr><td><input type="text" name="name"></td><td><input type="text" name="address"></td><td><input type="submit" value="追加"></td></tr>
+    </form>
+    </table>
+    
+    
+    <h2 class="box-header">店一覧</h2>
+    <table class="admin-table">
+        <tr><th class="small-th">id</th><th>name</th><th>address</th><th>削除</th></tr>
+        <% @stores.each do |store| %>
+            <tr>
+                <td><%= store.id %></td>
+                <td><%= store.name %></td>
+                <td><%= store.address %></td>
+                <td>
+                    <form action="/admin/delete/store/<%= store.id %>" method="post">
+                        <input type="submit" value="削除">
+                    </form>
+                </td>  
+            </tr>
+        <% end %>
+    </table>
+    </div>
+    
+    <div class="box">
+    <h2>駅一覧</h2>
+    <table class="admin-table">
+        <tr><th class="small-th">id</th><th>name</th><th>address</th><th>削除</th></tr>
+        <% @stations.each do |station| %>
+            <tr>
+                <td><%= station.id %></td>
+                <td><%= station.name %></td>
+                <td><%= station.address %></td>
+                <td>
+                    <form action="/admin/delete/station/<%= station.id %>" method="post">
+                        <input type="submit" value="削除">
+                    </form>
+                </td>  
+            </tr>
+        <% end %>
+    </table>
+    </div>
+    
+    <div class="box">
+    <h2>map一覧</h2>
+    
+    <% @maps.each do |map| %>
+    
+    <table class="admin-table">
+        <tr><th id="id">id</th><th>name</th><th>map_name</th><th>address</th><th>img</th><th>good</th><th>店の数</th><th>削除</th></tr>
+        <tr border=2>
+            <td><%= map.id %></td>
+            <td><%= map.name %></td>
+            <td><%= map.map_name %></td>
+            <td><%= @stations[map.station_id.to_i-1].address %></td>
+            <td>
+                <img width=100 src="https://maps.googleapis.com/maps/api/staticmap?center=東京都杉並区成田東6&zoom=16&size=400x400&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R&key=AIzaSyAXP0hQCi9NGL2MIbxgGQJfVrdqP8VOvMM&sensor=false&markers={color:black|size:small|<%= map.stores %>">
+            </td>
+            <!--ズーム値の調整、center値を選択した駅名（都市名）にできるように -->
+            <td><%= map.good %></td>
+            <td><%= map.stores.length %></td>
+            <td>
+                <form action="/admin/delete/map/<%= map.id %>" method="post">
+                    <input type="submit" value="削除">
+                </form>
+            </td>
+        </tr>
+        <% if map.stores.length > 0 %>
+                <tr><th>お店</th><th>name</th><th>address</th><th></th><th>station_id</th></tr>
+            <% map.stores.each do |store| %>
+                <tr><td></td><td><%= store.name %></td><td><%= store.address %></td><td></td><th><%= map.station_id %></th></tr>
+            <% end %>
+        <% end %>
+    </table> 
+    <% end %>
+    
+    </div>
+</body>
+
+</html>

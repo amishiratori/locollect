@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Locollect</title>
+</head>
+
+<body>
+    
+    <table>
+            <tr>
+                <th>お名前</th>
+                <td><%= @name %></td>
+            </tr>
+            <tr>
+                <th>マップ名</th>
+                <td><%= @map_name %></td>
+            </tr>
+            <tr>
+                <th>都市</th></th>
+                <td><%= @station %></td>
+            </tr>
+            <% end %>
+        </table>
+    
+    <div class="box">
+    <h2 class="box-header">お店を探す</h2>
+    
+    <form action="/find/json" method="post">
+        <p>キーワード入力：<input type="text" name="search_word"></p>
+        <!--<p>都道府県：<input type="text" name="search_pref"></p>-->
+        <input type="submit" value="検索">
+    </form>
+    
+    <% if @response_stores %>
+    <h2 class="box-header">検索結果</h2>
+    <table class="admin-table" border=1>
+        <tr><th>name</th><th>address</th><th>station</th></tr>
+        <% @response_stores.each do |response_store| %>
+        <tr>
+            <td><input type="checkbox" value=<%= response_store.id %> name="stores[]"></td>
+            <td><%= response_store["name"] %></td>
+            <td><%= response_store["address"].split(" ")[1] %></td>
+            <td><%= response_store["access"]["station"] %></td>
+        </tr>
+        <% end %>
+    <% end %>
+        <tr><td></td><td></td><td><input type="submit" value="決定"></td></tr>
+    </table>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Locollect</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/stylesheets/new.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+</head>
+
+<body>
+     <div class="header">
+        <div class="header-left">Locollect</div>
+        <div class="header-right">
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li><a href="/new">Create</a></li>
+            </ul>
+        </div>
+    </div>
+  
+   <div class="space">
+        
+    </div>
+  
+    <!--店検索フェイズ-->
+    
+    <div class="search">
+         <h2 class="box-header">お店を探す</h2>
+        <form action="/shops" method="post">
+        <p>キーワード入力：</p><input type="text" class="search" name="search_word"><br>
+        <p>予算入力：</p><input type ="text" class="search" name="budget">
+        <input type="image" class="img" alt="検索" width="25" height="25" src="/images/icon.png">
+    </div>
+    
+    
+    <!--マップ登録フェイズ-->
+    <!--<form action="/new" method="post" enctype="multipart/form-data"> -->
+    <div class="result">
+    <% if @response_stores %>
+    <h2 class="box-header">検索結果</h2>
+    <table class="admin-table" border=1>
+        <tr><th></th><th>name</th><th>address</th><th>station</th></tr>
+        <% @response_stores.each do |response_store| %>
+            <% if @budget.to_i > response_store["budget"].to_i %>
+                <tr>
+                    <td><input class="store-checkbox" type="checkbox" name="stores[]"></td>
+                    <td class="name"><%= response_store["name"] %></td>
+                    <td class="address"><%= response_store["address"].split(" ")[1] %></td>
+                    <td><%= response_store["access"]["station"] %></td>
+                    <td><%= response_store["budget"] %></td>
+                </tr>
+            <% end %>
+        <% end %>
+    <% end %>
+    </table>
+
+    <% if @response_stores %>
+        <div class="box">
+        <p>名前：<input type="text" class="name" id="name" name="name"></p>
+        <p>マップ名：<input type="text" class="map_name" id="map_name" name="map_name"></p>
+        <select name="station" id="station" class="station">
+            <% @stations.each do |station| %> 
+                <option value="<%= station.id %>"><%= station.name %></option>
+            <% end %>
+        </select>
+        <input type="button" class="submit" id="create-map" value="決定">
+        </div>
+    <% end %>
+    
+    
+<div class="gnavi">    
+<script>
+    window.onload = function() {
+        var store_array = [];
+        // 検索ボタンが押された時
+        $(".store-checkbox").click(function() {
+            var name = $(this).parent().siblings(".name",this).text();
+            var address = $(this).parent().siblings(".address",this).text();
+            var store = {"name": name,"address": address};
+            if($(this).prop('checked')){
+                // チェックをつけた時
+                store_array.push(store);
+            }else{
+                // チェックを外した時
+                for(i=0; i<store_array.length; i++){
+                    if(JSON.stringify(store_array[i]) == JSON.stringify(store)){
+                        store_array.splice(i--, 1);
+                    }
+                }
+            }
+        
+            if(store_array){
+                console.log(JSON.stringify(store_array) + "が送信用の配列store_arrayに格納されています。");
+            }else{
+                console.log("送信用の配列store_arrayは空です。");
+            }
+        });
+        
+        // 決定ボタンが押された時
+        $("#create-map").click(function() {
+            var name = $("#name").val();
+            var map_name = $("#map_name").val();
+            var station = $("#station").val();
+            $.ajax("/new",{
+            type: "POST",
+            data: {"name": name,"map_name": map_name,"station": station,"stores": store_array},
+            datatype: 'json',
+            success: function(msg){
+			    document.write(msg);
+   		    }
+            });
+            console.log("送信しました");
+        });
+    }
+
+</script>
+</div>
+</div>
+    
+<div class="footer">
+    <h2>Locollect</h2>
+    <div class="gnavi">
+  <a href="http://www.gnavi.co.jp/"> 
+<img src="http://apicache.gnavi.co.jp/image/rest/b/api_155_20.gif" width="155" height="20" border="0" alt="グルメ情報検索サイト　ぐるなび">
+</a>
+</div>
+</div>
+    
+    
+</body>
+
+</html>

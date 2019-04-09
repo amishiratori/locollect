@@ -1,0 +1,93 @@
+html {
+	overflow: auto;
+}
+ 
+body {
+	overflow: hidden;
+	background-color: #eee7e0;
+}
+
+.header{
+  z-index: 1;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 70px;
+  text-align: center;
+  background-color: rgba(167,210,141,0.76);
+}
+
+.header-left {
+    float: left;
+    color: white;
+    font-size: 40px;
+    margin-left: 20px;
+}
+    
+.header-right{
+    float: right;
+}
+
+.header-right li {
+    float: left;
+    padding: 1px 30px;
+    list-style: none;
+    display: block;
+}
+
+.header-right a{
+    text-decoration: none;
+    font-size: 20px;
+    color:white; 
+    
+    
+    display: inline-block;
+    -webkit-transition: 0.5s;
+    -moz-transition: 0.5s;
+    -o-transition: 0.5s;
+    -ms-transition: 0.5s;
+    transition: 0.5s;
+}
+
+.header-right a:hover {
+    -webkit-transform: scale(1.2,1.2);
+    -moz-transform: scale(1.2,1.2);
+    -o-transform: scale(1.2,1.2);
+    -ms-transform: scale(1.2,1.2);
+    transform: scale(1.2,1.2);
+}
+
+.space{
+    margin: 80px;
+}
+
+
+.content {
+    text-align: center;
+}
+
+.content li{
+    list-style: none;
+}
+
+table.stores {
+    margin-left: 100px;
+    padding-left: 100px;
+    text-align: center;
+}
+
+
+
+.footer {
+    clear: both;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 40px;
+    text-align: center;
+}
+
+.gnavi {
+    float: right;
+}

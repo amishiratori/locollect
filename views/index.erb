@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/stylesheets/index.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <title>Locollect</title>
+</head>
+<body>
+    
+    <div class="nav">
+        
+        <div class="header-right">
+            <ul>
+                <li><a href="/home"><img src="/images/logo 2.png" width="150" height="150"></a></li>
+                <li><a href="/new">Create</a></li>
+            </ul>
+        </div>
+     
+        <div class="search">
+         <form action="/search" method="post">
+        <input type="text" class="search" id="search" name="search">
+        <input type="submit" class="img" value="" > 
+        </form>
+       </div>
+       
+       <div class="gnavi">
+          <a href="http://www.gnavi.co.jp/"> 
+            <img src="http://apicache.gnavi.co.jp/image/rest/b/api_155_20.gif" width="155" height="20" border="0" alt="グルメ情報検索サイト　ぐるなび">
+          </a>
+       </div>
+    
+    </div>
+    
+    
+   
+       <div class="main">
+       <ul>
+           <% if @maps.present? %>
+            <% @maps.each do |map| %>
+            <div class="content">
+            <li>
+                <% stores_string = "" %>
+                <img src="https://maps.googleapis.com/maps/api/staticmap?center=<%= @stations[map.station_id.to_i-1].address %>&zoom=11&size=230x230&path=weight:3%7Ccolor:blue%7Cenc:{coaHnetiVjM??_SkM??~R&key=AIzaSyAXP0hQCi9NGL2MIbxgGQJfVrdqP8VOvMM&sensor=false&style=visibility:simplified&markers=color:green|size:small<%= stores_string %>">
+                <p class="map_name"><%= map.map_name %></p>
+                <p class="name"><%= map.name %></p>
+                <!--ピンで指定する店の文字列-->
+                
+                <% map.stores.each do |store| %>
+                    <% if store.address %>
+                        <% store_address = store.address %>
+                    <% else %>
+                        <% store_address ="" %>
+                    <% end %>
+                    <% stores_string = stores_string + "|" + store_address %>
+                <% end %>
+               </li>
+              <div class="good">
+              <span class="good"><%= map.good %></span>
+            <form action="/more/<%= map.id %>" method="post">
+                <input class="more" type="image" alt="もっと見る" src="/images/more.png" width="20" height="20">
+            </form>
+            <span>
+               <form action="/good/<%= map.id %>" method="post">
+                    <input class="good" type="image" alt="いいね！" src="/images/good.png" width="20" height="20">
+                </form>
+            </span>
+            
+    
+             <div class="logo">
+            <img src="/images/logo 2.png" width="25" height="25">
+            </div>
+            
+            
+            </div>
+            </div>
+            <% end %>
+            <% end %>
+        </ul>
+        </div>
+    
+</body>
+</html>
